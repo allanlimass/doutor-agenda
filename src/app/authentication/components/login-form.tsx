@@ -21,8 +21,7 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 
-const registerSchema = z.object({
-  name: z.string().trim().min(1, { message: "Nome é obrigatório" }),
+const loginSchema = z.object({
   email: z
     .string()
     .trim()
@@ -34,17 +33,16 @@ const registerSchema = z.object({
     .min(8, { message: "A senha deve ter pelo menos 8 caracteres" }),
 });
 
-export default function SignUpForm() {
-  const form = useForm<z.infer<typeof registerSchema>>({
-    resolver: zodResolver(registerSchema),
+export default function LoginForm() {
+  const form = useForm<z.infer<typeof loginSchema>>({
+    resolver: zodResolver(loginSchema),
     defaultValues: {
-      name: "",
       email: "",
       password: "",
     },
   });
 
-  function onSubmit(values: z.infer<typeof registerSchema>) {
+  function onSubmit(values: z.infer<typeof loginSchema>) {
     console.log(values);
   }
 
@@ -52,31 +50,10 @@ export default function SignUpForm() {
     <Card>
       <form className="space-y-4" onSubmit={form.handleSubmit(onSubmit)}>
         <CardHeader>
-          <CardTitle>Criar conta</CardTitle>
-          <CardDescription>Crie uma conta para continuar</CardDescription>
+          <CardTitle>Login</CardTitle>
+          <CardDescription>Faça login para continuar</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <FieldGroup>
-            <Controller
-              name="name"
-              control={form.control}
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel>Nome</FieldLabel>
-                  <Input
-                    {...field}
-                    aria-invalid={fieldState.invalid}
-                    placeholder="Digite seu nome"
-                    autoComplete="off"
-                  />
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
-              )}
-            />
-          </FieldGroup>
-
           <FieldGroup>
             <Controller
               name="email"
@@ -123,7 +100,7 @@ export default function SignUpForm() {
         <CardFooter>
           <Field orientation="horizontal">
             <Button className="w-full" type="submit">
-              Registrar
+              Entrar
             </Button>
           </Field>
         </CardFooter>
