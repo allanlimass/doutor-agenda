@@ -12,7 +12,7 @@ import {
 } from "@/components/page-container";
 import { auth } from "@/lib/auth";
 
-import AddDoctorButton from "../_components/add-doctor-button";
+import AddDoctorButton from "./_components/add-doctor-button";
 
 export default async function DoctorsPage() {
   const session = await auth.api.getSession({
