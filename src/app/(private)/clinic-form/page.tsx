@@ -1,15 +1,12 @@
-import { Button } from "@/components/ui/button";
 import {
   Dialog,
-  DialogClose,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
 
-import ClinicForm from "./components/form";
+import ClinicForm from "./_components/form";
 
 export default function ClinicFormPage() {
   return (
@@ -22,7 +19,6 @@ export default function ClinicFormPage() {
           </DialogDescription>
         </DialogHeader>
         <ClinicForm />
-        
       </DialogContent>
     </Dialog>
   );
