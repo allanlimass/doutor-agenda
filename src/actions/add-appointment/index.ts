@@ -31,8 +31,6 @@ export const addAppointment = actionClient
       .set("minute", parseInt(parsedInput.time.split(":")[1]))
       .toDate();
 
-    console.log(parsedInput);
-
     await db.insert(appointmentsTable).values({
       ...parsedInput,
       clinicId: session?.user.clinic?.id,

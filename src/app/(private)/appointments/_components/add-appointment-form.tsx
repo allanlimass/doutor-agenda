@@ -6,7 +6,7 @@ import { useAction } from "next-safe-action/hooks";
 import { Controller, useForm } from "react-hook-form";
 import { NumericFormat } from "react-number-format";
 import { toast } from "sonner";
-import z, { date } from "zod";
+import z from "zod";
 
 import { addAppointment } from "@/actions/add-appointment";
 import { Button } from "@/components/ui/button";
@@ -40,7 +40,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { doctorsTable, patientsTable } from "@/db/schema";
+import { appointmentsTable, doctorsTable, patientsTable } from "@/db/schema";
 
 const formSchema = z.object({
   patientId: z.string().min(1, {
@@ -64,14 +64,15 @@ interface AddAppointmentFormProps {
   isOpen: boolean;
   patients: (typeof patientsTable.$inferSelect)[];
   doctors: (typeof doctorsTable.$inferSelect)[];
+  appointment: (typeof appointmentsTable.$inferSelect)[];
   onSuccess?: () => void;
 }
 
 export default function AddAppointmentForm({
   patients,
   doctors,
+  appointment,
   onSuccess,
-  isOpen,
 }: AddAppointmentFormProps) {
   const form = useForm<z.infer<typeof formSchema>>({
     shouldUnregister: true,
@@ -229,6 +230,7 @@ export default function AddAppointmentForm({
                         mode="single"
                         selected={field.value}
                         onSelect={field.onChange}
+                        disabled={(date) => date < new Date()}
                       />
                     </PopoverContent>
                   </Popover>

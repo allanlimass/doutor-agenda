@@ -17,6 +17,7 @@ import { appointmentsTable, doctorsTable, patientsTable } from "@/db/schema";
 import { auth } from "@/lib/auth";
 
 import AppointmentButton from "./_components/add-appointment-button";
+import { appointmentsTableColumns } from "./_components/table-columns";
 
 export default async function AppointmentsPage() {
   const session = await auth.api.getSession({
@@ -47,6 +48,8 @@ export default async function AppointmentsPage() {
     }),
   ]);
 
+  console.log(appointments);
+
   return (
     <PageContainer>
       <PageHeader>
@@ -60,6 +63,12 @@ export default async function AppointmentsPage() {
           <AppointmentButton patients={patients} doctors={doctors} />
         </PageActions>
       </PageHeader>
+      <PageContent>
+        <DataTable
+          data={appointments}
+          columns={appointmentsTableColumns}
+        ></DataTable>
+      </PageContent>
     </PageContainer>
   );
 }
