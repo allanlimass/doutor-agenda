@@ -3,6 +3,7 @@ import { useAction } from "next-safe-action/hooks";
 import { useState } from "react";
 import { toast } from "sonner";
 
+import { deleteAppointment } from "@/actions/delete-appointment";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -24,7 +25,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { appointmentsTable } from "@/db/schema";
+import { appointmentsTable, doctorsTable, patientsTable } from "@/db/schema";
 
 import AddAppointmentForm from "./add-appointment-form";
 
@@ -45,12 +46,30 @@ type AppointmentWithRelations = typeof appointmentsTable.$inferSelect & {
 
 interface AppointmentsTableActionsProps {
   appointment: AppointmentWithRelations;
+  patients: (typeof patientsTable.$inferSelect)[];
+  doctors: (typeof doctorsTable.$inferSelect)[];
 }
 
 const AppointmentsTableActions = ({
   appointment,
+  patients,
+  doctors,
 }: AppointmentsTableActionsProps) => {
   const [upsertDialogIsOpen, setUpsertDialogIsOpen] = useState(false);
+
+  const deleteAppointmentAction = useAction(deleteAppointment, {
+    onSuccess: () => {
+      toast.success("Agendamento deletado com sucesso.");
+    },
+    onError: () => {
+      toast.error("Erro ao deletar o agendamento.");
+    },
+  });
+
+  const handleDeleteAppointmentClick = () => {
+    if (!appointment) return;
+    deleteAppointmentAction.execute({ id: appointment.id });
+  };
 
   return (
     <Dialog open={upsertDialogIsOpen} onOpenChange={setUpsertDialogIsOpen}>
@@ -89,7 +108,10 @@ const AppointmentsTableActions = ({
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                <AlertDialogAction variant="destructive">
+                <AlertDialogAction
+                  onClick={handleDeleteAppointmentClick}
+                  variant="destructive"
+                >
                   Excluir
                 </AlertDialogAction>
               </AlertDialogFooter>
@@ -101,6 +123,8 @@ const AppointmentsTableActions = ({
       <AddAppointmentForm
         isOpen={upsertDialogIsOpen}
         appointment={appointment}
+        patients={patients}
+        doctors={doctors}
         onSuccess={() => setUpsertDialogIsOpen(false)}
       />
     </Dialog>

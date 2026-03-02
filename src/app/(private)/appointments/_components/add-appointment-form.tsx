@@ -64,11 +64,12 @@ interface AddAppointmentFormProps {
   isOpen: boolean;
   patients: (typeof patientsTable.$inferSelect)[];
   doctors: (typeof doctorsTable.$inferSelect)[];
-  appointment: (typeof appointmentsTable.$inferSelect)[];
+  appointment?: typeof appointmentsTable.$inferSelect | null;
   onSuccess?: () => void;
 }
 
 export default function AddAppointmentForm({
+  isOpen,
   patients,
   doctors,
   appointment,
@@ -78,11 +79,13 @@ export default function AddAppointmentForm({
     shouldUnregister: true,
     resolver: zodResolver(formSchema),
     defaultValues: {
-      patientId: "",
-      doctorId: "",
-      appointmentPrice: 0,
-      date: undefined,
-      time: "",
+      patientId: appointment?.patientId ?? "",
+      doctorId: appointment?.doctorId ?? "",
+      appointmentPrice: appointment?.appointmentPriceInCents
+        ? appointment.appointmentPriceInCents / 100
+        : 0,
+      date: appointment?.date ? new Date(appointment.date) : undefined,
+      time: appointment?.date ? format(new Date(appointment.date), "HH:mm:ss") : "",
     },
   });
 
@@ -106,9 +109,13 @@ export default function AddAppointmentForm({
   return (
     <DialogContent>
       <DialogHeader>
-        <DialogTitle>Adicionar agendamento</DialogTitle>
+        <DialogTitle>
+          {appointment ? "Editar agendamento" : "Adicionar agendamento"}
+        </DialogTitle>
         <DialogDescription>
-          Crie um novo agendamento para sua clínica.
+          {appointment
+            ? "Edite as informações do agendamento."
+            : "Crie um novo agendamento para sua clínica."}
         </DialogDescription>
       </DialogHeader>
       <Form {...form}>
@@ -162,7 +169,7 @@ export default function AddAppointmentForm({
                     <SelectContent>
                       {doctors.map((doctor) => (
                         <SelectItem key={doctor.id} value={doctor.id}>
-                          {doctor.name}
+                          {doctor.name} - {doctor.specialty}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -317,7 +324,9 @@ export default function AddAppointmentForm({
           </FieldGroup>
 
           <DialogFooter>
-            <Button type="submit">Criar agendamento</Button>
+            <Button type="submit">
+              {appointment ? "Salvar alterações" : "Criar agendamento"}
+            </Button>
           </DialogFooter>
         </form>
       </Form>

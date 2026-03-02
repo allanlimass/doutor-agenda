@@ -67,6 +67,7 @@ export default async function AppointmentsPage() {
         <DataTable
           data={appointments}
           columns={appointmentsTableColumns}
+          meta={{ patients, doctors }}
         ></DataTable>
       </PageContent>
     </PageContainer>

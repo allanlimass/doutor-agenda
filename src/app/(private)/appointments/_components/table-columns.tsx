@@ -4,7 +4,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
-import { appointmentsTable } from "@/db/schema";
+import { appointmentsTable, doctorsTable, patientsTable } from "@/db/schema";
 
 import AppointmentsTableActions from "./table-actions";
 
@@ -65,9 +65,20 @@ export const appointmentsTableColumns: ColumnDef<AppointmentWithRelations>[] = [
   },
   {
     id: "actions",
-    cell: (params) => {
-      const appointment = params.row.original;
-      return <AppointmentsTableActions appointment={appointment} />;
+    cell: ({ row, table }) => {
+      const appointment = row.original;
+      const { patients, doctors } = table.options.meta as {
+        patients: (typeof patientsTable.$inferSelect)[];
+        doctors: (typeof doctorsTable.$inferSelect)[];
+      };
+
+      return (
+        <AppointmentsTableActions
+          appointment={appointment}
+          patients={patients}
+          doctors={doctors}
+        />
+      );
     },
   },
 ];
