@@ -7,6 +7,7 @@ import { Controller, useForm } from "react-hook-form";
 import { NumericFormat } from "react-number-format";
 import { toast } from "sonner";
 import z from "zod";
+import { useEffect } from "react";
 
 import { addAppointment } from "@/actions/add-appointment";
 import { Button } from "@/components/ui/button";
@@ -89,19 +90,42 @@ export default function AddAppointmentForm({
     },
   });
 
+  useEffect(() => {
+    if (isOpen) {
+      form.reset({
+        patientId: appointment?.patientId ?? "",
+        doctorId: appointment?.doctorId ?? "",
+        appointmentPrice: appointment?.appointmentPriceInCents
+          ? appointment.appointmentPriceInCents / 100
+          : 0,
+        date: appointment?.date ? new Date(appointment.date) : undefined,
+        time: appointment?.date ? format(new Date(appointment.date), "HH:mm:ss") : "",
+      });
+    }
+  }, [appointment, isOpen, form]);
+
   const addAppointmentAction = useAction(addAppointment, {
     onSuccess: () => {
-      toast.success("Agendamento criado com sucesso.");
+      toast.success(
+        appointment
+          ? "Agendamento atualizado com sucesso."
+          : "Agendamento criado com sucesso.",
+      );
       onSuccess?.();
     },
     onError: () => {
-      toast.error("Erro ao criar agendamento.");
+      toast.error(
+        appointment
+          ? "Erro ao atualizar agendamento."
+          : "Erro ao criar agendamento.",
+      );
     },
   });
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     addAppointmentAction.execute({
       ...values,
+      id: appointment?.id,
       appointmentPriceInCents: values.appointmentPrice * 100,
     });
   };

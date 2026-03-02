@@ -1,6 +1,7 @@
 "use server";
 
 import dayjs from "dayjs";
+import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 
@@ -31,11 +32,21 @@ export const addAppointment = actionClient
       .set("minute", parseInt(parsedInput.time.split(":")[1]))
       .toDate();
 
-    await db.insert(appointmentsTable).values({
-      ...parsedInput,
-      clinicId: session?.user.clinic?.id,
-      date: appointmentDateTime,
-    });
+    if (parsedInput.id) {
+      await db
+        .update(appointmentsTable)
+        .set({
+          ...parsedInput,
+          date: appointmentDateTime,
+        })
+        .where(eq(appointmentsTable.id, parsedInput.id));
+    } else {
+      await db.insert(appointmentsTable).values({
+        ...parsedInput,
+        clinicId: session?.user.clinic?.id,
+        date: appointmentDateTime,
+      });
+    }
 
     revalidatePath("/appointments");
   });
