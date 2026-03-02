@@ -25,7 +25,7 @@ export default function AddAppointmentButton({
       <DialogTrigger asChild>
         <Button>
           <PlusIcon />
-          Adicionar agendamento
+          Agendar consulta
         </Button>
       </DialogTrigger>
       <AddAppointmentForm
